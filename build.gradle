@@ -37,9 +37,14 @@ repositories {
   mavenCentral()
 }
 
+configurations {
+  xjc
+}
+
 dependencies {
   compile group: 'de.jflex', name: 'jflex', version: '1.4.3'
   compile group: 'commons-io', name: 'commons-io', version: '2.4'
+  xjc group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '2.2.4-1'
   // compile group: 'net.sf.squirrel-sql.thirdparty-non-maven', name: 'java-cup', version: '0.11a'
   compile files("$cupLib")
   compile files("$katjaCommon", "$bdl", "$mhs", "$model")
@@ -67,6 +72,12 @@ eclipse {
 task removeGen << {
   delete "$genDir"
   delete "$genLibDir"
+}
+
+task createDirs () {
+  outputs.files("$genDir", "$genLibDir")
+  new File("$genDir").mkdirs()
+  new File("$genLibDir").mkdirs()
 }
 
 // builds the ast model of bdl files and katja common
@@ -118,8 +129,6 @@ task buildCPP {
   }
 }
 
-task runKatja
-
 task runJFlex {
   inputs.files("$flexSpec", "$flexLib")
   outputs.file("$flexScanner")
@@ -139,18 +148,44 @@ task runCup {
   }
 }
 
-task generateResources
+// run jaxb xjc generator
+task xjc () {
+  inputs.files("$specDir/xsd/*.xsd")
+  outputs.files("$genDir/org/spiritconsortium/xmlschema/spirit/_1685_2009/")
 
+  ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.xjc.asPath)
+  ant.xjc(
+    destdir: genDir,
+    schema: "$specDir/xsd/index.xsd"
+  ) {
+    produces(
+      dir: "$genDir/org/spiritconsortium/xmlschema/spirit/_1685_2009/",
+      includes: "**/*"
+    )
+    depends(
+      dir: "$specDir/xsd",
+      includes: "*.xsd"
+    )
+  }
+}
+
+// task definitions for dependencies
+task generateResources
+task runKatja
+
+// dependencies between tasks
 clean.dependsOn removeGen
 
-//runKatja.dependsOn buildAST
 runKatja.dependsOn buildBDL
 runKatja.dependsOn buildMHS
 runKatja.dependsOn buildCPP
 
+generateResources.dependsOn createDirs
+
 generateResources.dependsOn runKatja
 generateResources.dependsOn runJFlex
 generateResources.dependsOn runCup
+generateResources.dependsOn xjc
 
 compileJava.dependsOn generateResources
 
