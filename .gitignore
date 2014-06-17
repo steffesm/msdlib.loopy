@@ -22,5 +22,7 @@ doc/tex/*.out
 doc/tex/*.synctex.gz
 doc/tex/*.toc
 
+work
+!work/coretest_ref
 syntax: regexp
 ^\.project$
