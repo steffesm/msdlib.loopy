@@ -1,0 +1,6 @@
+fpga -f board/system.bit
+connect mb mdm
+rst
+dow board/app.elf
+rst
+con
