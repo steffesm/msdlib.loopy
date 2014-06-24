@@ -19,39 +19,6 @@ void led_test() {
   std::cout << "test has been completed" << std::endl;
 }
 
-void fifo_test() {
-
-  // init test sequence  
-  int value1 = 0x88cb47c9;
-  int value2 = 0x8a9cdf65;
-  int value3 = 0xcaf40ed9;
-
-  // init vector
-  std::vector<std::bitset<32> > values;
-  
-  //seeds.push_back(reset);
-  values.push_back(value1);
-  values.push_back(value2);
-  values.push_back(value3);
-  values.push_back(value1);
-  values.push_back(value2);
-  values.push_back(value3);
-  values.push_back(value1);
-  values.push_back(value2);
-  values.push_back(value3);
-
-  // write vector
-  axififo_a.s_axis.write(values);
-
-  // read values
-  std::vector<std::bitset<32> > vals(9);
-  axififo_a.m_axis.read(vals);
-
-  // print values
-  for(unsigned int i = 0; i < vals.size(); i++)
-      std::cout << std::endl << "value: " << vals[i].to_ulong();
-}
-
 void randomTest() {
   // init test seeds
   int reset = 0x00000001;
@@ -143,9 +110,10 @@ void gpi_test() {
 
 int main() {
   startup("131.246.74.2");
-
   led_test();
-
+  
+  randomTest();
+  
   gpi_test();
 
   shutdown();
