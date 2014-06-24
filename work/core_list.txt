@@ -1,8 +1,12 @@
 core-list
 cores currently in design to be replaced:
-microblaze 8.40a
 axi_intc 1.03a
 
 cores to be integrated into design instead of old versions:
-microblaze 8.50c
 axi_intc 1.04a
+
+Cores already replaced:
+microblaze 8.40a
+
+Cores changed and working:
+microblaze 8.50c
