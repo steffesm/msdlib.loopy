@@ -1,6 +1,0 @@
-host
-!host/src/coretest_ref.cpp
-!host/src/api/components.h
-
-temp
-!temp/edk/system.mhs
